@@ -18,26 +18,29 @@ public class RateController {
 
     @GetMapping
     public List<Ratings> getRatings () {
-        return RateService.getRatings();
+        return rateservice.getRatings();
     }
 
     @PostMapping
-    public void newRating (@RequestBody Ratings rate){
-        RateService.addNewRating(rate);
+    public void addNewRating (@RequestBody Ratings rate){
+        if (rate.getUser_rating() > 5 || rate.getUser_rating() < 1){
+            throw new IllegalStateException("rate from 1 - 5 only");
+        }
+        rateservice.addNewRating(rate);
     }
 
     @DeleteMapping(path = "{rateId}")
     public void deleteRating (@PathVariable("rateId") Long rateId){
-        RateService.deleteRating(rateId);
+        rateservice.deleteRating(rateId);
     }
 
-    @GetMapping (path = "average/{bookId}")
-    public void averageRating(@PathVariable("bookId") String bookId){
-        RateService.averageRating(bookId);
+    @GetMapping (path = "/average/{bookId}")
+    public Double averageRating(@PathVariable("bookId") String bookId){
+        return rateservice.averageRating(bookId);
     }
 
-    @GetMapping (path = "sort/{bookId}")
-    public void sortRating(@PathVariable("bookId") String bookId){
-        RateService.sortRating(bookId);
+    @GetMapping (path = "/sort/{bookId}")
+    public List<Ratings> sortRating(@PathVariable("bookId") String bookId){
+        return rateservice.sortRating(bookId);
     }
 }

@@ -9,15 +9,6 @@ import java.util.Date;
 public class Ratings {
 
     @Id
-    @SequenceGenerator(
-            name = "ratings_sequence",
-            sequenceName = "ratings_sequence",
-            allocationSize =  1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "ratings_sequence"
-    )
     private long id;
     private int user_rating;
     private String book_id;
@@ -25,6 +16,7 @@ public class Ratings {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "comment_id", referencedColumnName = "id")
+    @MapsId
     private Comments comment;
 
     public Ratings() {
@@ -44,8 +36,7 @@ public class Ratings {
         this.comment = comment;
     }
 
-    public long getId() {
-        return id;
+    public long getId() { return id;
     }
 
     public void setId(long id) {
@@ -53,7 +44,7 @@ public class Ratings {
     }
 
     public int getUser_rating() {
-        return user_rating;
+            return user_rating;
     }
 
     public void setUser_rating(int user_rating) {

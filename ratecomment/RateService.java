@@ -1,23 +1,19 @@
 package com.example.demo.ratecomment;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
+import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 
-@Component
+@Service
 public class RateService {
 
     private static RateRepository rateRepository;
-    private static RateRepository repository;
+    private static CommentRepository commentRepository;
 
     @Autowired
-    public RateService(RateRepository rateRepository) {
+    public RateService(RateRepository rateRepository, CommentRepository commentRepository) {
         this.rateRepository = rateRepository;
+        this.commentRepository = commentRepository;
     }
 
     public static List<Ratings> getRatings(){
@@ -28,6 +24,7 @@ public class RateService {
 
     public static void addNewRating(Ratings rate) {
         rateRepository.save(rate);
+        commentRepository.save(rate.getComment());
     }
 
     public static void deleteRating(Long rateId) {
@@ -38,7 +35,7 @@ public class RateService {
         rateRepository.deleteById(rateId);
     }
 
-    public static double averageRating(String bookId) {
+    public static Double averageRating(String bookId) {
 
         if (rateRepository.findRatingByBook(bookId).isEmpty()) {
             throw new IllegalStateException("no ratings on this book");
@@ -47,13 +44,10 @@ public class RateService {
 
     }
 
-    public static void sortRating(String bookId) {
-        while(rateRepository.findRatingByBook(bookId).isPresent()) {
-            List<Ratings> bookRatings = rateRepository.findAll(Sort.by(Sort.Direction.DESC, "user_rating");
-            System.out.println(bookRatings);
-        }
+    public static List<Ratings> sortRating(String bookId) {
         if (rateRepository.findRatingByBook(bookId).isEmpty()){
             throw new IllegalStateException("no ratings on this book");
         }
+        return rateRepository.sortRatingsDesc(bookId);
     }
 }
